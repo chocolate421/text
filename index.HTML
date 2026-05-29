@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>🧠 SBTI 神病类型指标</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(145deg, #f9e7b3 0%, #f5d78c 100%);
+      font-family: 'Segoe UI', 'Comic Sans MS', '幼圆', 'YouYuan', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      margin: 0;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.08);
+    }
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(255, 250, 240, 0.9);
+      backdrop-filter: blur(16px);
+      background: #fffef7;
+      border-radius: 48px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 30px 50px rgba(180, 120, 30, 0.25), 0 10px 20px rgba(0,0,0,0.1);
+      border: 2px solid #f9d56e;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #5e3a1c;
+      text-align: center;
+      margin-bottom: 0.25rem;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 #ffd966;
+      word-break: break-word;
+    }
+    .subhead {
+      text-align: center;
+      font-size: 1rem;
+      color: #a65e2e;
+      margin-bottom: 2rem;
+      font-style: italic;
+      background: #ffefc0;
+      display: inline-block;
+      padding: 0.4rem 1.8rem;
+      border-radius: 40px;
+      margin-left: auto;
+      margin-right: auto;
+      width: fit-content;
+      font-weight: 600;
+      border: 1px dashed #d4953b;
+    }
+    .progress-bar {
+      background: #f0dbb0;
+      height: 14px;
+      border-radius: 30px;
+      margin: 1.5rem 0 1.8rem;
+      overflow: hidden;
+      border: 1px solid #dba959;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #f4a261, #e76f51);
+      border-radius: 30px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 8px #f4a261;
+    }
+    .question-card {
+      background: #ffffffde;
+      backdrop-filter: blur(10px);
+      background: #fffbf2;
+      border-radius: 35px;
+      padding: 2rem 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 2px solid #f5c16c;
+      box-shadow: 0 12px 18px rgba(190, 130, 40, 0.15);
+      transition: all 0.25s;
+    }
+    .q-num {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #b9571e;
+      background: #ffe4b5;
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+    .q-text {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #3e2c1b;
+      margin-bottom: 1.8rem;
+      line-height: 1.4;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .option-btn {
+      background: #fef8e7;
+      border: 2px solid #e5b86c;
+      border-radius: 30px;
+      padding: 0.9rem 1.3rem;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #4b2e1a;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #fff7e6;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+    .option-btn:hover {
+      background: #ffe3a3;
+      border-color: #d18d3a;
+      transform: translateX(6px);
+      box-shadow: 0 6px 12px rgba(200, 130, 20, 0.2);
+    }
+    .option-btn.selected {
+      background: #fcd385;
+      border-color: #b45f2a;
+      font-weight: bold;
+      box-shadow: 0 0 12px #f9a826;
+      color: #3b2a0e;
+    }
+    .option-letter {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 32px;
+      height: 32px;
+      background: #f7d9a0;
+      border-radius: 50%;
+      font-weight: 800;
+      color: #633d1a;
+      margin-right: 0.4rem;
+      font-size: 1.1rem;
+      border: 1px solid #c1822e;
+      flex-shrink: 0;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.8rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: white;
+      border: 2px solid #cf9f4a;
+      padding: 0.8rem 1.8rem;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #fdeec9;
+      color: #5a3b1a;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      box-shadow: 0 5px 0 #dba147;
+      border: 2px solid #b47d44;
+    }
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #b47d44;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      box-shadow: 0 3px 0 #b4915c;
+    }
+    .submit-btn {
+      background: #f4a261;
+      border-color: #9b4b1c;
+      color: white;
+      font-weight: bold;
+      background: #e07b39;
+      box-shadow: 0 5px 0 #9c5729;
+    }
+    .result-box {
+      background: #fff2d8;
+      border-radius: 32px;
+      padding: 1.8rem;
+      margin-top: 1.5rem;
+      border: 3px dotted #d9933c;
+      text-align: center;
+      transition: 0.3s;
+    }
+    .result-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #954f1c;
+      margin-bottom: 1rem;
+    }
+    .result-desc {
+      font-size: 1.1rem;
+      color: #3d2b15;
+      line-height: 1.7;
+      background: #ffffffc2;
+      padding: 1rem;
+      border-radius: 28px;
+    }
+    .restart-btn {
+      margin-top: 1.2rem;
+      background: #ffd58c;
+    }
+    .hide {
+      display: none;
+    }
+    .score-summary {
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      color: #754c24;
+      font-weight: 600;
+    }
+    @media (max-width: 450px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      .q-text {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="appContainer">
+  <h1>🧠 SBTI</h1>
+  <div style="text-align: center;"><span class="subhead">神病类型指标·精神状态不稳版</span></div>
+
+  <!-- 进度条 -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+  </div>
+
+  <!-- 题目区域动态渲染 -->
+  <div id="questionArea"></div>
+
+  <!-- 导航和提交 -->
+  <div class="nav-buttons" id="navButtons">
+    <button class="btn" id="prevBtn" disabled>👈 上一题</button>
+    <span id="questionIndicator" style="font-weight: bold; color:#7b4a1e;"></span>
+    <button class="btn" id="nextBtn">下一题 👉</button>
+  </div>
+
+  <!-- 结果展示区 -->
+  <div id="resultArea" class="result-box hide"></div>
+</div>
+
+<script>
+  (function() {
+    // ----- 题库 (20道幽默SBTI) -----
+    const questions = [
+      { text: "早上闹钟响了，你的第一反应是？", options: ["按掉，再睡10分钟，循环5次。", "惊醒，以为今天要高考了。", "闹钟是什么？我的生物钟是睡到自然醒。"] },
+      { text: "洗澡时突然想到一个绝妙的主意，你会？", options: ["洗完就忘，仿佛无事发生。", "顶着泡沫冲出来记在手机上。", "在浴室里大声演讲，觉得自己能改变世界。"] },
+      { text: "朋友约你出门，你换好衣服照镜子时想的是？", options: ["“嗯，今天走时尚乞丐风。”", "“我怎么这么好看，不出门可惜了。”", "“算了，换回睡衣，跟朋友说被床绑架了。”"] },
+      { text: "在公共场合不小心摔了一跤，你会？", options: ["立刻弹起，装作在系鞋带。", "干脆躺下，看看有没有人来做人工呼吸。", "尴尬地笑着向四周敬礼：“谢谢大家，再来一次！”"] },
+      { text: "你的手机相册里，数量最多的是？", options: ["截图——各种“以后再看”但再也没看的干货。", "自己的自拍，同一个角度50张选1张。", "丑照，专门用来做朋友的表情包。"] },
+      { text: "领导/老师在台上讲话，你突然想笑，怎么办？", options: ["掐自己大腿，把这辈子悲伤的事想一遍。", "假装咳嗽，顺势捂住嘴。", "放弃抵抗，笑出声，然后说是旁边人讲的冷笑话。"] },
+      { text: "深夜11点，你突然觉得饿了，你会？", options: ["打开外卖软件，刷了半小时后决定忍忍睡了。", "翻冰箱，用仅剩的食材做出一顿满汉全席。", "“忍”字头上一把刀，打开吃播，精神进食。"] },
+      { text: "如果有人对你说“你东西掉了”，你下意识会？", options: ["猛回头，发现自己上当了。", "微笑回答：“是，我掉了你的联系方式。”", "低头找半天，然后说：“哦，是掉的素质，我不要了。”"] },
+      { text: "在电梯里只有你和陌生人，你会？", options: ["假装看楼层数字，仿佛那是股市K线图。", "透过镜面电梯悄悄打量对方穿搭。", "突然开始哼歌，让气氛变得诡异起来。"] },
+      { text: "看到“第二件半价”的促销，你的第一反应是？", options: ["拿起计算器，算一下单件均价是否划算。", "立刻打电话问朋友需不需要拼单。", "坚信自己能一个人吃/用掉两份，冲动消费。"] },
+      { text: "如果用一句话描述你的工作/学习状态，是？", options: ["“正在缓冲……已完成99%。”", "“截止日期是第一生产力。”", "“当一天和尚，撞一天……咦？钟呢？”"] },
+      { text: "路上有人发传单，你的处理方式是？", options: ["接过来，走两步再扔，给彼此最后的温柔。", "摆摆手，然后加快脚步走开。", "接过来说：“有没有带优惠券的那种？”"] },
+      { text: "你觉得自己最像哪种动物？", options: ["树懒，能不动就不动，反射弧绕地球两圈。", "哈士奇，思维跳跃，随时准备拆家。", "猫，对谁都爱答不理，除非有吃的。"] },
+      { text: "朋友向你倾诉烦恼，你通常怎么回应？", options: ["理性分析，给出1234条解决方案。", "比朋友还激动：“什么？！这你能忍？！”", "安静听完，然后说：“走，去吃顿好的。”"] },
+      { text: "如果一觉醒来发现自己会隐身术，你第一个念头是？", options: ["去银行金库……看看是不是真的。", "去暗恋的人家里，偷看Ta的日记。", "继续睡，有这技能也不能帮我早起。"] },
+      { text: "你理想中的周末是？", options: ["手机静音，与世隔绝，神游天外。", "约满朋友，特种兵式打卡一天三个地。", "被窝里翻个身，伸个懒腰，感叹“虚度光阴真好”。"] },
+      { text: "当别人对你说“你长得好面熟”，你的反应是？", options: ["“可能我长了一张大众脸。”", "“上辈子我们可能是失散多年的父子/母女。”", "“对，我是网红，网上那个就是我。”"] },
+      { text: "考试/面试前夜，你通常在干什么？", options: ["转发锦鲤，全网搜集好运表情包。", "通宵复习/准备，相信自己能创造奇迹。", "早早睡觉，梦里什么都有。"] },
+      { text: "如何判断夏天真的来了？", options: ["蚊子开始在我的耳边开演唱会。", "出门5分钟，流汗2小时。", "西瓜的价格开始跳水。"] },
+      { text: "对于这份测试，你的态度是？", options: ["认真审视，觉得还真有那么点道理。", "嗤之以鼻，但还是做完了，想看看结果是啥。", "直接拉到最后，准备对号入座吐槽。"] }
+    ];
+
+    const totalQ = questions.length;
+    // 用户答案数组: 索引0~19, 存储 'A','B','C' 或 null
+    let answers = new Array(totalQ).fill(null);
+    // 当前题目索引 (0开始)
+    let currentIndex = 0;
+
+    // DOM元素
+    const questionArea = document.getElementById('questionArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressFill = document.getElementById('progressFill');
+    const questionIndicator = document.getElementById('questionIndicator');
+    const resultArea = document.getElementById('resultArea');
+    const navButtons = document.getElementById('navButtons');
+
+    // 辅助：更新进度条和指示器
+    function updateProgressAndIndicator() {
+      const answeredCount = answers.filter(a => a !== null).length;
+      const percent = (answeredCount / totalQ) * 100;
+      progressFill.style.width = `${percent}%`;
+      questionIndicator.textContent = `${currentIndex + 1} / ${totalQ}`;
+    }
+
+    // 检查是否所有题目都已回答
+    function allAnswered() {
+      return answers.every(a => a !== null);
+    }
+
+    // 渲染当前题目
+    function renderQuestion(index) {
+      const q = questions[index];
+      if (!q) return;
+
+      const selectedAns = answers[index]; // 'A','B','C' 或 null
+
+      let html = `<div class="question-card">
+        <span class="q-num">第 ${index + 1} 题</span>
+        <div class="q-text">${q.text}</div>
+        <div class="options">`;
+
+      const letters = ['A', 'B', 'C'];
+      q.options.forEach((opt, optIndex) => {
+        const letter = letters[optIndex];
+        const selectedClass = (selectedAns === letter) ? 'selected' : '';
+        html += `<div class="option-btn ${selectedClass}" data-option="${letter}">
+                  <span class="option-letter">${letter}</span> ${opt}
+                </div>`;
+      });
+
+      html += `</div></div>`;
+      questionArea.innerHTML = html;
+
+      // 绑定选项点击事件
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          const option = this.getAttribute('data-option');
+          if (option) {
+            // 设置答案
+            answers[currentIndex] = option;
+            // 重新渲染当前题目以高亮选中
+            renderQuestion(currentIndex);
+            // 更新进度、按钮状态
+            updateProgressAndIndicator();
+            checkAllAnsweredAndShowSubmit();
+            updateNavButtons();
+          }
+        });
+      });
+
+      updateNavButtons();
+      updateProgressAndIndicator();
+      checkAllAnsweredAndShowSubmit();
+    }
+
+    // 更新上一页/下一页按钮状态
+    function updateNavButtons() {
+      prevBtn.disabled = (currentIndex === 0);
+      // 如果当前题目未回答，不能进入下一题（但可以保留next按钮，我们限制一下：如果没有答案不允许下一题？设定为友好：允许跳转但提醒？最好强制回答才能下一题，更符合测试习惯）
+      const currentAnswer = answers[currentIndex];
+      if (!currentAnswer) {
+        nextBtn.disabled = true;
+      } else {
+        nextBtn.disabled = false;
+      }
+
+      // 如果全部答完，可以显示提交入口；导航区域额外显示提交按钮（通过动态生成）
+      if (allAnswered()) {
+        // 在nav区域可能已经存在提交按钮，由check函数控制
+      }
+    }
+
+    // 检查是否所有题目回答完毕，在导航旁边显示提交按钮 (动态插入)
+    function checkAllAnsweredAndShowSubmit() {
+      const existingSubmit = document.getElementById('submitTestBtn');
+      if (allAnswered()) {
+        if (!existingSubmit) {
+          // 创建提交按钮插入到navButtons中
+          const submitBtn = document.createElement('button');
+          submitBtn.id = 'submitTestBtn';
+          submitBtn.className = 'btn submit-btn';
+          submitBtn.innerHTML = '✨ 查看我的神病人格 ✨';
+          submitBtn.addEventListener('click', showResult);
+          navButtons.appendChild(submitBtn);
+        }
+      } else {
+        if (existingSubmit) {
+          existingSubmit.remove();
+        }
+      }
+    }
+
+    // 切换到指定题目
+    function goToQuestion(index) {
+      if (index < 0 || index >= totalQ) return;
+      currentIndex = index;
+      renderQuestion(currentIndex);
+      // 滚动到顶部（可选）
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 下一题
+    function nextQuestion() {
+      if (currentIndex < totalQ - 1 && answers[currentIndex] !== null) {
+        goToQuestion(currentIndex + 1);
+      } else if (currentIndex === totalQ - 1 && answers[currentIndex] !== null) {
+        // 已经是最后一题且已答，可提示或直接显示结果？这里保留提交按钮。
+      }
+    }
+
+    // 上一题
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        goToQuestion(currentIndex - 1);
+      }
+    }
+
+    // 计算结果：统计A/B/C数量
+    function calculateResult() {
+      let countA = 0, countB = 0, countC = 0;
+      answers.forEach(ans => {
+        if (ans === 'A') countA++;
+        else if (ans === 'B') countB++;
+        else if (ans === 'C') countC++;
+      });
+      return { countA, countB, countC };
+    }
+
+    // 根据最高频次返回结果类型
+    function getPersonalityResult(countA, countB, countC) {
+      const max = Math.max(countA, countB, countC);
+      // 处理平局情况：优先展示混合型？按照题目要求：如果都差不多，恭喜是复合型人才
+      const isTie = (countA === max && countB === max) || (countA === max && countC === max) || (countB === max && countC === max) || (countA === countB && countB === countC);
+      
+      if (isTie || (countA === max && countB === max) || (countA === max && countC === max) || (countB === max && countC === max)) {
+        return {
+          title: "🌀 复合型神病 · 全方位戏精",
+          desc: "你是一个难以被定义的存在，既有A的淡定，又有B的疯癫，还藏着C的佛系。集各种矛盾于一身，精神世界丰富得像一部连续剧。恭喜你，你是行走的惊喜制造机！"
+        };
+      } else if (countA > countB && countA > countC) {
+        return {
+          title: "🐢 稳中带皮的「定海神针」",
+          desc: "表面波澜不惊，内心弹幕满屏。你是朋友眼中的靠谱担当，但只有你知道自己全靠一口仙气吊着。善于在各种Deadline边缘反复横跳，并最终完美落地。人生信条：能用睡觉解决的事，绝不动脑。"
+        };
+      } else if (countB > countA && countB > countC) {
+        return {
+          title: "🎭 社交恐怖分子 · 戏精本精",
+          desc: "精力旺盛，思维活跃，有时候连你自己都不知道下一个想法有多离谱。你是聚会的暖场王，也是突发奇想的行动派。人生如戏，你的剧本里没有“尴尬”二字，只要你不觉得尬，尬的就是别人。"
+        };
+      } else {
+        return {
+          title: "🍃 反内卷第一人 · 当代庄子",
+          desc: "佛系中带着一丝叛逆，清醒中透着一丝摆烂。你深谙“世上无难事，只要肯放弃”的真谛，有着超然物外的精神境界。不是懒，只是能量需要用在刀刃上，比如吃和睡。"
+        };
+      }
+    }
+
+    // 显示结果界面
+    function showResult() {
+      if (!allAnswered()) {
+        alert('还有题目没选完哦，请完成所有20道题再查看结果～');
+        return;
+      }
+
+      const { countA, countB, countC } = calculateResult();
+      const result = getPersonalityResult(countA, countB, countC);
+
+      // 隐藏题目区和导航（但保留progress？隐藏题目区及nav，显示结果）
+      questionArea.innerHTML = ''; 
+      navButtons.classList.add('hide');
+      document.querySelector('.progress-bar').classList.add('hide');
+      
+      resultArea.classList.remove('hide');
+      resultArea.innerHTML = `
+        <div class="result-title">${result.title}</div>
+        <div class="score-summary">【A:${countA}次  B:${countB}次  C:${countC}次】</div>
+        <div class="result-desc">${result.desc}</div>
+        <button class="btn restart-btn" id="restartBtn">🔄 再测一次 (认清自己)</button>
+      `;
+
+      document.getElementById('restartBtn').addEventListener('click', restartTest);
+    }
+
+    // 重启测试
+    function restartTest() {
+      answers = new Array(totalQ).fill(null);
+      currentIndex = 0;
+      resultArea.classList.add('hide');
+      navButtons.classList.remove('hide');
+      document.querySelector('.progress-bar').classList.remove('hide');
+      // 移除可能残留的提交按钮
+      const submitBtn = document.getElementById('submitTestBtn');
+      if (submitBtn) submitBtn.remove();
+      
+      renderQuestion(0);
+      updateProgressAndIndicator();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 事件绑定
+    prevBtn.addEventListener('click', prevQuestion);
+    nextBtn.addEventListener('click', nextQuestion);
+
+    // 初始化渲染第一题
+    renderQuestion(0);
+    updateProgressAndIndicator();
+  })();
+</script>
+</body>
+</html>
